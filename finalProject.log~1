@@ -1,5 +1,4 @@
-
---- Job finalProject.gms Start 02/20/21 13:30:15 34.1.0 r644dbd9 DEX-DEG x86 64bit/Mac OS X
+--- Job finalProject.gms Start 02/20/21 13:29:31 34.1.0 r644dbd9 DEX-DEG x86 64bit/Mac OS X
 --- Applying:
     /Library/Frameworks/GAMS.framework/Versions/34/Resources/gmsprmun.txt
 --- GAMS Parameters defined
@@ -20,7 +19,7 @@ Licensee: GAMS Demo license for David Mottice            G210203|0002CO-GEN
 GAMS 34.1.0   Copyright (C) 1987-2021 GAMS Development. All rights reserved
 --- Starting compilation
 --- finalProject.gms(13) 3 Mb
---- . min_follower_data.csv(6) 3 Mb
+--- . mean_follower_data.csv(6) 3 Mb
 --- finalProject.gms(20) 3 Mb
 --- . genre_upper_bound.csv(6) 3 Mb
 --- finalProject.gms(27) 3 Mb
@@ -57,24 +56,24 @@ Reduced LP has 10 rows, 27 columns, and 68 nonzeros.
 Presolve time = 0.00 sec. (0.03 ticks)
 
 Iteration      Dual Objective            In Variable           Out Variable
-     1 sI            0.000000x(homepage_takeover,cou           budget artif
-     2        46731804.195804x(sponsored_playlist,cogenre_diversifica slack
-     3        40853276.168224x(homepage_takeover,rapx(homepage_takeover,cou
-     4        40850655.850891x(audio_everywhere,rap)ad_type_diversifi slack
-     5        40840499.060106x(sponsored_session,rapad_type_diversifi slack
-     6        40830672.870106  x(video_takeover,rap)ad_type_diversifi slack
-     7        40824777.156106         x(overlay,rap)ad_type_diversifi slack
-     8        40801849.379439     x(leaderboard,rap)ad_type_diversifi slack
+     1 sI            0.000000x(homepage_takeover,pop           budget artif
+     2       757182045.902410x(homepage_takeover,dangenre_diversifica slack
+     3       757112759.768583x(audio_everywhere,dancad_type_diversifi slack
+     4       756950715.917147x(sponsored_session,popad_type_diversifi slack
+     5       756764803.354986  x(video_takeover,pop)ad_type_diversifi slack
+     6       756608909.553875       x(overlay,dance)ad_type_diversifi slack
+     7       756002655.882888   x(leaderboard,dance)ad_type_diversifi slack
+     8       755814444.243484x(sponsored_playlist,poad_type_diversifi slack
 
 --- LP status (1): optimal.
 --- Cplex Time: 0.00sec (det. 0.06 ticks)
 
 
 Optimal solution found
-Objective:     40801849.379439
+Objective:    755814444.243484
 
 --- Reading solution for model spotifyAds
---- Executing after solve: elapsed 0:00:00.031
+--- Executing after solve: elapsed 0:00:00.436
 --- finalProject.gms(106) 4 Mb
 *** Status: Normal completion
---- Job finalProject.gms Stop 02/20/21 13:30:15 elapsed 0:00:00.032
+--- Job finalProject.gms Stop 02/20/21 13:29:31 elapsed 0:00:00.437

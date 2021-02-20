@@ -10,18 +10,18 @@ Sets
 Parameter f(j)    'avg # of followers in genre based off of generated list'
 /
 $ondelim
-$include csv_data/follower_data.csv
+$include csv_data/mean_follower_data.csv
 $offdelim
 / ;
     
-Parameter g(j)    'upper bound for ads allocated to genre j'
+Parameter g(j)    'upper bound for # of ads allocated to genre j'
 /
 $ondelim
 $include csv_data/genre_upper_bound.csv
 $offdelim
 / ;
 
-Parameter h(i) 'percentage lower bound for type of ad'
+Parameter h(i) 'lower bound for # of types of ads'
 /
 $ondelim
 $include csv_data/ad_lower_bound.csv
