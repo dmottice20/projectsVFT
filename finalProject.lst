@@ -1,0 +1,364 @@
+GAMS 34.1.0  r644dbd9 Released Jan 29, 2021 DEX-DEG x86 64bit/Mac OS X - 02/20/21 12:09:26 Page 1
+Spotify Ad Planner
+C o m p i l a t i o n
+
+
+   2  * Coded by 2 Lt David Mottice
+   3  * OPER 610 - Linear Programming - Final Project
+   4   
+   5  Sets
+   6      i 'types of Spotify advertisements' / audio_everywhere, sponsored_session, video_takeover,
+   7                                            overlay, homepage_takeover, leaderboard, sponsored_playlist /
+   8      j 'genres of music' / indie, dance, rap, pop, country, misc /;
+   9   
+  10  Parameter f(j)    'avg # of followers in genre based off of generated list'
+  11  /
+INCLUDE    /Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/csv_data/follower_data.csv
+  14  indie,8000
+  15  dance,6000
+  16  rap,10000
+  17  pop,100000
+  18  country,90000
+  19  misc,8000
+  21  / ;
+  22   
+  23  Parameter g(j)    'upper bound for ads allocated to genre j'
+  24  /
+INCLUDE    /Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/csv_data/genre_upper_bound.csv
+  27  indie,1000000
+  28  dance,1000000
+  29  rap,1000000
+  30  pop,20000
+  31  country,20000
+  32  misc,1000000
+  34  / ;
+  35   
+  36  Parameter h(i) 'percentage lower bound for type of ad'
+  37  /
+INCLUDE    /Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/csv_data/ad_lower_bound.csv
+  40  audio_everywhere,100
+  41  sponsored_session,100
+  42  video_takeover,100
+  43  overlay,100
+  44  homepage_takeover,100
+  45  leaderboard,100
+  46  sponsored_playlist,100
+  48  / ;
+  49   
+  50  Parameter
+  51      b       'overall budget allowed to market' / 1000000 / ;
+  52   
+  53  Table ct(i,j) 'cost in $ for ad type i for genre j'
+INCLUDE    /Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/csv_data/cost_data.csv
+  56  ,indie,dance,rap,pop,country,misc
+  57  audio_everywhere,10.5,10.5,10.7,11.2,11,10.5
+  58  sponsored_session,21,21,21,22.4,22,21
+  59  video_takeover,18.9,18.9,19.26,20.16,19.8,18.9
+  60  overlay,6.3,6.3,6.42,6.72,6.6,6.3
+  61  homepage_takeover,12.6,12.6,12.84,13.44,13.2,12.6
+  62  leaderboard,21,21,21.4,22.4,22,21
+  63  sponsored_playlist,26.25,26.25,26.75,28,27.5,26.25
+  65   
+  66  Table rt(i,j) 'click rate for ad type i for genre j'
+INCLUDE    /Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/csv_data/click_rate_data.csv
+  69  ,indie,dance,rap,pop,country,misc
+  70  audio_everywhere,0.1260,0.1200,0.1320,0.1560,0.1500,0.1320,
+  71  sponsored_session,0.2205,0.2100,0.2310,0.2730,0.2625,0.2310,
+  72  video_takeover,0.1995,0.1900,0.2090,0.2470,0.2375,0.2090,
+  73  overlay,0.0525,0.0500,0.0550,0.0650,0.0625,0.0550,
+  74  homepage_takeover,0.1680,0.1600,0.1760,0.2080,0.2000,0.1760,
+  75  leaderboard,0.1575,0.1500,0.1650,0.1950,0.1875,0.1650
+  76  sponsored_playlist,0.2625,0.2500,0.2750,0.3250,0.3125,0.2750
+  78   
+  79  Parameter c(i,j) 'cost in $';
+  80      c(i,j)=ct(i,j);
+  81   
+  82  Parameter r(i,j) 'click rates';
+  83      r(i,j)=rt(i,j) / 100;
+  84   
+  85  Variables
+  86      x(i,j) '# of ads bought for genre j and deliverd via mode i'
+  87      z      'total expected # of active, engaging customers';
+  88   
+  89  Positive Variable x;
+  90   
+  91  Equations
+  92      engagement                  'obj fx for # of expected engagement in terms of customers'
+  93      budget                      'budgetary constraints'
+  94      genre_diversification(j)    'ensure we do not over allocated along 1 genre'
+  95      ad_type_diversification(i)  'ensure we do not over allocated along one medium of ads';
+  96   
+  97  engagement ..                 z =e= sum(j,(sum(i,r(i,j)*(x(i,j))))*f(j)) ;
+  98  budget ..                     sum((i,j),c(i,j)*x(i,j)) =l= b  ;
+  99  genre_diversification(j) ..   sum(i, x(i,j)) =l= g(j) ;
+ 100  ad_type_diversification(i) .. sum(j, x(i,j)) =g= h(i) ;
+ 101   
+ 102  Model spotifyAds /all/;
+ 103   
+ 104  Solve spotifyAds using lp maximizing z ;
+ 105   
+ 106  Display x.l, x.m ;
+GAMS 34.1.0  r644dbd9 Released Jan 29, 2021 DEX-DEG x86 64bit/Mac OS X - 02/20/21 12:09:26 Page 2
+Spotify Ad Planner
+Include File Summary
+
+
+   SEQ   GLOBAL TYPE      PARENT   LOCAL  FILENAME
+
+     1        1 INPUT          0       0  /Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/finalProject.gms
+     2       13 INCLUDE        1      13  ./Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/csv_data/follower_data.csv
+     3       26 INCLUDE        1      20  ./Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/csv_data/genre_upper_bound.csv
+     4       39 INCLUDE        1      27  ./Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/csv_data/ad_lower_bound.csv
+     5       55 INCLUDE        1      36  ./Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/csv_data/cost_data.csv
+     6       68 INCLUDE        1      41  ./Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/csv_data/click_rate_data.csv
+
+
+COMPILATION TIME     =        0.001 SECONDS      3 MB  34.1.0 r644dbd9 DEX-DEG
+GAMS 34.1.0  r644dbd9 Released Jan 29, 2021 DEX-DEG x86 64bit/Mac OS X - 02/20/21 12:09:26 Page 3
+Spotify Ad Planner
+Equation Listing    SOLVE spotifyAds Using LP From line 104
+
+
+---- engagement  =E=  obj fx for # of expected engagement in terms of customers
+
+engagement..  - 10.08*x(audio_everywhere,indie) - 7.2*x(audio_everywhere,dance) - 13.2*x(audio_everywhere,rap) - 156*x(audio_everywhere,pop) - 135*x(audio_everywhere,country) - 10.56*x(audio_everywhere,misc) - 17.64*x(sponsored_session,indie) - 12.6*x(sponsored_session,dance) - 23.1*x(sponsored_session,rap) - 273*x(sponsored_session,pop) - 236.25*x(sponsored_session,country) - 18.48*x(sponsored_session,misc) - 15.96*x(video_takeover,indie) - 11.4*x(video_takeover,dance) - 20.9*x(video_takeover,rap) - 247*x(video_takeover,pop) - 213.75*x(video_takeover,country) - 16.72*x(video_takeover,misc) - 4.2*x(overlay,indie) - 3*x(overlay,dance) - 5.5*x(overlay,rap) - 65*x(overlay,pop) - 56.25*x(overlay,country) - 4.4*x(overlay,misc) - 13.44*x(homepage_takeover,indie) - 9.6*x(homepage_takeover,dance) - 17.6*x(homepage_takeover,rap) - 208*x(homepage_takeover,pop) - 180*x(homepage_takeover,country) - 14.08*x(homepage_takeover,misc) - 12.6*x(leaderboard,indie) - 9*x(leaderboard,dance) - 16.5*x(leaderboard,rap) - 195*x(leaderboard,pop) - 168.75*x(leaderboard,country) - 13.2*x(leaderboard,misc) - 21*x(sponsored_playlist,indie) - 15*x(sponsored_playlist,dance) - 27.5*x(sponsored_playlist,rap) - 325*x(sponsored_playlist,pop) - 281.25*x(sponsored_playlist,country) - 22*x(sponsored_playlist,misc) + z =E= 0 ; (LHS = 0)
+     
+
+---- budget  =L=  budgetary constraints
+
+budget..  10.5*x(audio_everywhere,indie) + 10.5*x(audio_everywhere,dance) + 10.7*x(audio_everywhere,rap) + 11.2*x(audio_everywhere,pop) + 11*x(audio_everywhere,country) + 10.5*x(audio_everywhere,misc) + 21*x(sponsored_session,indie) + 21*x(sponsored_session,dance) + 21*x(sponsored_session,rap) + 22.4*x(sponsored_session,pop) + 22*x(sponsored_session,country) + 21*x(sponsored_session,misc) + 18.9*x(video_takeover,indie) + 18.9*x(video_takeover,dance) + 19.26*x(video_takeover,rap) + 20.16*x(video_takeover,pop) + 19.8*x(video_takeover,country) + 18.9*x(video_takeover,misc) + 6.3*x(overlay,indie) + 6.3*x(overlay,dance) + 6.42*x(overlay,rap) + 6.72*x(overlay,pop) + 6.6*x(overlay,country) + 6.3*x(overlay,misc) + 12.6*x(homepage_takeover,indie) + 12.6*x(homepage_takeover,dance) + 12.84*x(homepage_takeover,rap) + 13.44*x(homepage_takeover,pop) + 13.2*x(homepage_takeover,country) + 12.6*x(homepage_takeover,misc) + 21*x(leaderboard,indie) + 21*x(leaderboard,dance) + 21.4*x(leaderboard,rap) + 22.4*x(leaderboard,pop) + 22*x(leaderboard,country) + 21*x(leaderboard,misc) + 26.25*x(sponsored_playlist,indie) + 26.25*x(sponsored_playlist,dance) + 26.75*x(sponsored_playlist,rap) + 28*x(sponsored_playlist,pop) + 27.5*x(sponsored_playlist,country) + 26.25*x(sponsored_playlist,misc) =L= 1000000 ; (LHS = 0)
+     
+
+---- genre_diversification  =L=  ensure we do not over allocated along 1 genre
+
+genre_diversification(indie)..  x(audio_everywhere,indie) + x(sponsored_session,indie) + x(video_takeover,indie) + x(overlay,indie) + x(homepage_takeover,indie) + x(leaderboard,indie) + x(sponsored_playlist,indie) =L= 1000000 ; (LHS = 0)
+     
+genre_diversification(dance)..  x(audio_everywhere,dance) + x(sponsored_session,dance) + x(video_takeover,dance) + x(overlay,dance) + x(homepage_takeover,dance) + x(leaderboard,dance) + x(sponsored_playlist,dance) =L= 1000000 ; (LHS = 0)
+     
+genre_diversification(rap)..  x(audio_everywhere,rap) + x(sponsored_session,rap) + x(video_takeover,rap) + x(overlay,rap) + x(homepage_takeover,rap) + x(leaderboard,rap) + x(sponsored_playlist,rap) =L= 1000000 ; (LHS = 0)
+     
+REMAINING 3 ENTRIES SKIPPED
+
+
+---- ad_type_diversification  =G=  ensure we do not over allocated along one medium of ads
+
+ad_type_diversification(audio_everywhere)..  x(audio_everywhere,indie) + x(audio_everywhere,dance) + x(audio_everywhere,rap) + x(audio_everywhere,pop) + x(audio_everywhere,country) + x(audio_everywhere,misc) =G= 100 ; (LHS = 0, INFES = 100 ****)
+     
+ad_type_diversification(sponsored_session)..  x(sponsored_session,indie) + x(sponsored_session,dance) + x(sponsored_session,rap) + x(sponsored_session,pop) + x(sponsored_session,country) + x(sponsored_session,misc) =G= 100 ; (LHS = 0, INFES = 100 ****)
+     
+ad_type_diversification(video_takeover)..  x(video_takeover,indie) + x(video_takeover,dance) + x(video_takeover,rap) + x(video_takeover,pop) + x(video_takeover,country) + x(video_takeover,misc) =G= 100 ; (LHS = 0, INFES = 100 ****)
+     
+REMAINING 4 ENTRIES SKIPPED
+
+GAMS 34.1.0  r644dbd9 Released Jan 29, 2021 DEX-DEG x86 64bit/Mac OS X - 02/20/21 12:09:26 Page 4
+Spotify Ad Planner
+Column Listing      SOLVE spotifyAds Using LP From line 104
+
+
+---- x  # of ads bought for genre j and deliverd via mode i
+
+x(audio_everywhere,indie)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+      -10.08    engagement
+       10.5     budget
+        1       genre_diversification(indie)
+        1       ad_type_diversification(audio_everywhere)
+
+x(audio_everywhere,dance)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+       -7.2     engagement
+       10.5     budget
+        1       genre_diversification(dance)
+        1       ad_type_diversification(audio_everywhere)
+
+x(audio_everywhere,rap)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+      -13.2     engagement
+       10.7     budget
+        1       genre_diversification(rap)
+        1       ad_type_diversification(audio_everywhere)
+
+REMAINING 39 ENTRIES SKIPPED
+
+---- z  total expected # of active, engaging customers
+
+z
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       engagement
+
+GAMS 34.1.0  r644dbd9 Released Jan 29, 2021 DEX-DEG x86 64bit/Mac OS X - 02/20/21 12:09:26 Page 5
+Spotify Ad Planner
+Model Statistics    SOLVE spotifyAds Using LP From line 104
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS           4     SINGLE EQUATIONS           15
+BLOCKS OF VARIABLES           2     SINGLE VARIABLES           43
+NON ZERO ELEMENTS           169
+
+
+GENERATION TIME      =        0.004 SECONDS      4 MB  34.1.0 r644dbd9 DEX-DEG
+GAMS 34.1.0  r644dbd9 Released Jan 29, 2021 DEX-DEG x86 64bit/Mac OS X - 02/20/21 12:09:26 Page 6
+Spotify Ad Planner
+Solution Report     SOLVE spotifyAds Using LP From line 104
+
+
+               S O L V E      S U M M A R Y
+
+     MODEL   spotifyAds          OBJECTIVE  z
+     TYPE    LP                  DIRECTION  MAXIMIZE
+     SOLVER  CPLEX               FROM LINE  104
+
+**** SOLVER STATUS     1 Normal Completion         
+**** MODEL STATUS      1 Optimal                   
+**** OBJECTIVE VALUE         11329956.2937
+
+ RESOURCE USAGE, LIMIT          0.011 10000000000.000
+ ITERATION COUNT, LIMIT         9    2147483647
+--- *** This solver runs with a demo license. No commercial use.
+--- GMO memory 0.50 Mb (peak 0.50 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 20.1.0.0 link memory 0.00 Mb (peak 0.01 Mb)
+--- Starting Cplex
+
+
+--- LP status (1): optimal.
+--- Cplex Time: 0.00sec (det. 0.06 ticks)
+
+
+Optimal solution found
+Objective:     11329956.293706
+
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- EQU engagement          .              .              .             1.0000      
+---- EQU budget            -INF      1000000.0000   1000000.0000         7.0804      
+
+  engagement  obj fx for # of expected engagement in terms of customers
+  budget  budgetary constraints
+
+---- EQU genre_diversification  ensure we do not over allocated along 1 genre
+
+               LOWER          LEVEL          UPPER         MARGINAL
+
+indie          -INF             .       1000000.0000          .          
+dance          -INF             .       1000000.0000          .          
+rap            -INF          100.0000   1000000.0000          .          
+pop            -INF        20000.0000     20000.0000       126.7483      
+country        -INF        20000.0000     20000.0000        86.5385      
+misc           -INF             .       1000000.0000          .          
+
+---- EQU ad_type_diversification  ensure we do not over allocated along one medium of ads
+
+                          LOWER          LEVEL          UPPER         MARGINAL
+
+audio_everywhere         100.0000       100.0000        +INF          -29.4231      
+sponsored_session        100.0000       100.0000        +INF           -6.0577      
+video_takeover           100.0000       100.0000        +INF          -12.9808      
+overlay                  100.0000       100.0000        +INF          -39.9563      
+homepage_takeover        100.0000      7491.0490        +INF             .          
+leaderboard              100.0000       100.0000        +INF          -73.5577      
+sponsored_playlist       100.0000     32108.9510        +INF             .          
+
+---- VAR x  # of ads bought for genre j and deliverd via mode i
+
+                                  LOWER          LEVEL          UPPER         MARGINAL
+
+audio_everywhere  .indie            .              .            +INF          -34.8413      
+audio_everywhere  .dance            .              .            +INF          -37.7213      
+audio_everywhere  .rap              .              .            +INF          -33.1374      
+audio_everywhere  .pop              .              .            +INF          -20.6259      
+audio_everywhere  .country          .           100.0000        +INF             .          
+audio_everywhere  .misc             .              .            +INF          -34.3613      
+sponsored_session .indie            .              .            +INF         -124.9911      
+sponsored_session .dance            .              .            +INF         -130.0311      
+sponsored_session .rap              .              .            +INF         -119.5311      
+sponsored_session .pop              .              .            +INF           -6.2920      
+sponsored_session .country          .           100.0000        +INF             .          
+sponsored_session .misc             .              .            +INF         -124.1511      
+video_takeover    .indie            .              .            +INF         -104.8792      
+video_takeover    .dance            .              .            +INF         -109.4392      
+video_takeover    .rap              .              .            +INF         -102.4881      
+video_takeover    .pop              .              .            +INF           -9.5087      
+video_takeover    .country          .           100.0000        +INF             .          
+video_takeover    .misc             .              .            +INF         -104.1192      
+overlay           .indie            .              .            +INF           -0.4503      
+overlay           .dance            .              .            +INF           -1.6503      
+overlay           .rap              .           100.0000        +INF             .          
+overlay           .pop              .              .            +INF          -69.3724      
+overlay           .country          .              .            +INF          -37.0629      
+overlay           .misc             .              .            +INF           -0.2503      
+homepage_takeover .indie            .              .            +INF          -75.7733      
+homepage_takeover .dance            .              .            +INF          -79.6133      
+homepage_takeover .rap              .              .            +INF          -73.3126      
+homepage_takeover .pop              .              .            +INF          -13.9091      
+homepage_takeover .country          .          7491.0490        +INF             .          
+homepage_takeover .misc             .              .            +INF          -75.1333      
+leaderboard       .indie            .              .            +INF          -62.5311      
+leaderboard       .dance            .              .            +INF          -66.1311      
+leaderboard       .rap              .              .            +INF          -61.4633      
+leaderboard       .pop              .              .            +INF          -16.7920      
+leaderboard       .country          .           100.0000        +INF             .          
+leaderboard       .misc             .              .            +INF          -61.9311      
+sponsored_playlist.indie            .              .            +INF         -164.8610      
+sponsored_playlist.dance            .              .            +INF         -170.8610      
+sponsored_playlist.rap              .              .            +INF         -161.9012      
+sponsored_playlist.pop              .         20000.0000        +INF             .          
+sponsored_playlist.country          .         12108.9510        +INF             .          
+sponsored_playlist.misc             .              .            +INF         -163.8610      
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- VAR z                 -INF      1.1329956E+7        +INF             .          
+
+  z  total expected # of active, engaging customers
+
+
+**** REPORT SUMMARY :        0     NONOPT
+                             0 INFEASIBLE
+                             0  UNBOUNDED
+GAMS 34.1.0  r644dbd9 Released Jan 29, 2021 DEX-DEG x86 64bit/Mac OS X - 02/20/21 12:09:26 Page 7
+Spotify Ad Planner
+E x e c u t i o n
+
+
+----    106 VARIABLE x.L  # of ads bought for genre j and deliverd via mode i
+
+                           rap         pop     country
+
+audio_everywhere                               100.000
+sponsored_session                              100.000
+video_takeover                                 100.000
+overlay                100.000
+homepage_takeover                             7491.049
+leaderboard                                    100.000
+sponsored_playlist               20000.000   12108.951
+
+
+----    106 VARIABLE x.M  # of ads bought for genre j and deliverd via mode i
+
+                         indie       dance         rap         pop     country        misc
+
+audio_everywhere       -34.841     -37.721     -33.137     -20.626                 -34.361
+sponsored_session     -124.991    -130.031    -119.531      -6.292                -124.151
+video_takeover        -104.879    -109.439    -102.488      -9.509                -104.119
+overlay                 -0.450      -1.650                 -69.372     -37.063      -0.250
+homepage_takeover      -75.773     -79.613     -73.313     -13.909                 -75.133
+leaderboard            -62.531     -66.131     -61.463     -16.792                 -61.931
+sponsored_playlist    -164.861    -170.861    -161.901                            -163.861
+
+
+
+EXECUTION TIME       =        0.029 SECONDS      4 MB  34.1.0 r644dbd9 DEX-DEG
+
+
+USER: GAMS Demo license for David Mottice            G210203|0002CO-GEN
+      Air Force Institute of Technology, United States of AmeriDL031165
+
+
+**** FILE SUMMARY
+
+Input      /Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/finalProject.gms
+Output     /Users/davidmottice/Documents/AFIT/OPER610/projectsVFT/finalProject.lst

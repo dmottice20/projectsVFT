@@ -1,0 +1,21 @@
+B 3 C o m p i l a t i o n
+B 103 Include File Summary
+B 119 Equation Listing    SOLVE spotifyAds Using LP From line 104
+D 122 engagement
+D 127 budget
+D 132 genre_diversification
+D 143 ad_type_diversification
+B 155 Column Listing      SOLVE spotifyAds Using LP From line 104
+E 158 x
+E 183 z
+B 191 Model Statistics    SOLVE spotifyAds Using LP From line 104
+B 204 Solution Report     SOLVE spotifyAds Using LP From line 104
+F 236 engagement
+F 237 budget
+F 242 genre_diversification
+F 253 ad_type_diversification
+G 265 x
+G 314 z
+B 324 E x e c u t i o n
+I 324 x
+I 338 x
